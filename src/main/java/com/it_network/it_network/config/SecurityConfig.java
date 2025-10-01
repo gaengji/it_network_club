@@ -22,12 +22,14 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests( (auth) -> auth
-                        .requestMatchers("/", "/login", "/auth/**").permitAll()
+                .authorizeHttpRequests((auth) -> auth
+                        // 로그인 없이 접근 허용할 경로 추가
+                        .requestMatchers("/", "/login", "/auth/**", "/posts/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
-                        .anyRequest().authenticated())
-                .formLogin( (auth) -> auth
+                        .anyRequest().authenticated()
+                )
+                .formLogin((auth) -> auth
                         .loginPage("/login")
                         .loginProcessingUrl("/loginProcess")
                         .defaultSuccessUrl("/")
@@ -36,6 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf((auth) -> auth.disable())
                 .build();
     }
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
