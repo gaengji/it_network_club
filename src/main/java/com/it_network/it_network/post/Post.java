@@ -1,21 +1,26 @@
 package com.it_network.it_network.post;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.it_network.it_network.comment.Comment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
 @Getter
 @Setter
-@Entity
 @Table(name = "post_tbl")
 public class Post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true, nullable = false)
-    private Integer id; // 게시물 일련번호
+    private Long id; // 게시물 일련번호
 
     @Column(nullable = false)
     private Integer member_id; // 회원 일련번호
@@ -30,7 +35,7 @@ public class Post {
     @Column(nullable = false)
     private String contents; // 내용
 
-    @Column(nullable = false,  columnDefinition = "INT DEFAULT 0")
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private Integer hit_cnt; // 조회수 기본값 0
 
     @Column(nullable = false, length = 15)
@@ -44,9 +49,14 @@ public class Post {
     private String upd_id; // 수정자
 
     @UpdateTimestamp
-    @Column()
+    @Column
     private LocalDateTime upd_date; // 수정일
 
+    // 댓글 목록 (게시글 삭제 시 댓글도 함께 삭제)
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @JsonManagedReference("post-comments")
+    @OrderBy("id asc")
+    private List<Comment> comments;
 
     // 작성
     public void createPost(Integer member_id, Integer category_id, String title,
@@ -57,20 +67,15 @@ public class Post {
         this.contents = contents;
         this.reg_id = reg_id;
         this.hit_cnt = 0;
-
     }
 
-    public void updatePost( Integer category_id, String title,
-                          String contents,String upd_id, LocalDateTime upd_date) {
+    // 수정
+    public void updatePost(Integer category_id, String title,
+                           String contents, String upd_id, LocalDateTime upd_date) {
         this.category_id = category_id;
         this.title = title;
         this.contents = contents;
         this.upd_id = upd_id;
         this.upd_date = upd_date;
-
     }
-
-
-
 }
-

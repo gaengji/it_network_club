@@ -11,4 +11,5 @@ public class AddUserRequestDto {
     private String user_pw;
     private String user_nm;
     private String email;
+
 }
