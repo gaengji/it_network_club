@@ -23,7 +23,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests( (auth) -> auth
-                        .requestMatchers("/", "/login", "/auth/**").permitAll()
+                        .requestMatchers("/", "/login", "/auth/**", "/posts/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated())
